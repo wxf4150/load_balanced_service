@@ -19,6 +19,7 @@ type LoadBalancedService struct {
 	nodes      []string
 	nodeMap    map[string]int
 	nodeCount  int
+	counter_svr  int
 	sync.RWMutex
 }
 
@@ -79,7 +80,7 @@ func (service *LoadBalancedService) Connect(serviceName string, endPoints []stri
 	return nil
 }
 
-func (service *LoadBalancedService) GetNode() (string, error) {
+func (service *LoadBalancedService) GetNode(isRobin bool) (string, error) {
 	if !service.connected {
 		return "", errors.New("Must call connect first")
 	}
@@ -90,8 +91,14 @@ func (service *LoadBalancedService) GetNode() (string, error) {
 	if service.nodeCount == 0 {
 		return "", ErrEmptyService
 	}
-
-	return service.nodes[rand.Intn(service.nodeCount)], nil
+	nindex:=0
+	if isRobin{
+		nindex=service.counter_svr % service.nodeCount
+	}else {
+		nindex = rand.Intn(service.nodeCount)
+	}
+	service.counter_svr++
+	return service.nodes[nindex], nil
 }
 
 func (service *LoadBalancedService) addNode(key string) {
