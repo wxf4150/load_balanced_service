@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/huichen/load_balanced_service"
+	"github.com/wxf4150/load_balanced_service"
 	"log"
 	"strings"
 	"time"
@@ -32,7 +32,7 @@ func main() {
 	}
 
 	for {
-		node, _ := service.GetNode()
+		node, _ := service.GetNode(true)
 		if node != "" {
 			log.Printf("assigned to node: %v", node)
 		} else {
